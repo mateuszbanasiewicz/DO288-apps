@@ -10,7 +10,6 @@ config_s2i
 
 echo "---> Installing application source"
 cp -af /tmp/src/. ./
-cp -rf skrypt.py ./
 rm -rf ./.hg ./.git ./.svn
 
 date >> info.html
