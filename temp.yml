@@ -1,0 +1,75 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: exam-template
+  annotations:
+    description: "Description"
+  labels:
+    siema: tak
+objects:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: app11
+  spec:
+    containers:
+    - env:
+      - name: MYAPP_CONFIGURATION
+        value: ${MYPARAMETER}
+      image: quay.io/redhattraining/httpd-parent
+      name: app11
+      ports:
+      - containerPort: 80
+        protocol: TCP
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    name: app12
+  spec:
+    containers:
+    - env:
+      - name: MYAPP_CONFIGURATION
+        value: ${MYPARAMETER}
+      image: quay.io/redhattraining/httpd-parent
+      name: app12
+      ports:
+      - containerPort: 80
+        protocol: TCP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: app
+  spec:
+    selector:
+      tag: latest
+    ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+- kind: Route
+  apiVersion: route.openshift.io/v1
+  metadata:
+    name: app
+  spec:
+    host: ${URL}
+    to:
+      kind: Service
+      name: app
+      weight: 100
+    port:
+      targetPort: 80
+    wildcardPolicy: None
+parameters:
+- description: Myapp configuration data
+  name: MYPARAMETER
+  required: true
+  value: siema
+- description: URL
+  name: URL
+  required: true
+  value: app.apps.ocp1.edu.local
+- description: TEST
+  name: TEST
+  required: true
+labels:
+  tag: latest
